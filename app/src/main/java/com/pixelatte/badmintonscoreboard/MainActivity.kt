@@ -5,6 +5,7 @@ import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
+import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -23,6 +24,8 @@ class MainActivity : AppCompatActivity() {
     var set2:Int = 0
     var game:Int = 0
 
+    lateinit var playerName:TextView
+
     var deuceScore:Boolean = false
     val gamePoint = 21
     val maxScore = 25
@@ -35,6 +38,7 @@ class MainActivity : AppCompatActivity() {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
 //        window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
         supportActionBar?.hide()
+        playerName = findViewById(R.id.player_name)
     }
 
     fun clickedButtonSwitch(view: View) {

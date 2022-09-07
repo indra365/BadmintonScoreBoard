@@ -1,5 +1,6 @@
 package com.pixelatte.badmintonscoreboard
 
+import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
@@ -29,9 +30,7 @@ class MainActivity : AppCompatActivity() {
     var set2:Int = 0
     var game:Int = 0
 
-    var deuceScore:Boolean = false
     val gamePoint = 21
-    val maxScore = 29
 
 
     private lateinit var binding: ActivityMain3Binding
@@ -42,8 +41,6 @@ class MainActivity : AppCompatActivity() {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main3)
 //        window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
         supportActionBar?.hide()
-
-        updateScore()
     }
 
     fun clickedButtonSwitch(view: View) {
@@ -218,9 +215,48 @@ class MainActivity : AppCompatActivity() {
         setImmersiveMode()
     }
 
+    override fun onStop() {
+        super.onStop()
+
+        val prefs = getSharedPreferences("prefs", Context.MODE_PRIVATE)
+        val editor = prefs.edit()
+
+        editor.putInt("score1", score1)
+        editor.putInt("score2", score2)
+        editor.putInt("set1", set1)
+        editor.putInt("set2", set2)
+        editor.apply()
+    }
+
     override fun onResume() {
         super.onResume()
+
+        val prefs = getSharedPreferences("prefs", Context.MODE_PRIVATE)
+        score1 = prefs.getInt("score1", 0)
+        score2 = prefs.getInt("score2", 0)
+        set1 = prefs.getInt("set1", 0)
+        set2 = prefs.getInt("set2", 0)
+
+        updateScore()
         setImmersiveMode()
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+  //      moveTaskToBack(true)
+    }
+
+    override fun onDestroy() {
+        val prefs = getSharedPreferences("prefs", Context.MODE_PRIVATE)
+        val editor = prefs.edit()
+
+        editor.putInt("score1", 0)
+        editor.putInt("score2", 0)
+        editor.putInt("set1", 0)
+        editor.putInt("set2", 0)
+        editor.apply()
+
+        super.onDestroy()
     }
 
 }

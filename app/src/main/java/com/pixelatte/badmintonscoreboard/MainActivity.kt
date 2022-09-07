@@ -4,16 +4,21 @@ import android.content.Intent
 import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
+import android.view.MotionEvent
 import android.view.View
-import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
+import androidx.core.view.MotionEventCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.databinding.DataBindingUtil
-import com.pixelatte.badmintonscoreboard.databinding.ActivityMainBinding
+import com.pixelatte.badmintonscoreboard.databinding.ActivityMain3Binding
+// import com.pixelatte.badmintonscoreboard.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
+
+    val DEBUG_TAG = "MainActivity"
 
     // variable declarations
     var player1: String = "Player 1"
@@ -24,21 +29,21 @@ class MainActivity : AppCompatActivity() {
     var set2:Int = 0
     var game:Int = 0
 
-    lateinit var playerName:TextView
-
     var deuceScore:Boolean = false
     val gamePoint = 21
-    val maxScore = 25
+    val maxScore = 29
 
-    private lateinit var binding:ActivityMainBinding
+
+    private lateinit var binding: ActivityMain3Binding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
+        setContentView(R.layout.activity_main3)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_main3)
 //        window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
         supportActionBar?.hide()
-        playerName = findViewById(R.id.player_name)
+
+        updateScore()
     }
 
     fun clickedButtonSwitch(view: View) {
@@ -95,8 +100,6 @@ class MainActivity : AppCompatActivity() {
     fun clickedScore2(view: View) {
         score2 += 1
 
-        // deuceScore = score1 == 20 && score2 == 20
-
         if (score2 == 20) {
             binding.txtScore2.setTextColor(Color.RED)
         }
@@ -130,6 +133,10 @@ class MainActivity : AppCompatActivity() {
 
     private fun resetScore() {
         if(score1 == 0 && score2 == 0) {
+
+            if(set1 == 0 && set2 == 0)
+                return
+
             val builder = AlertDialog.Builder(this)
             builder.setTitle("Reset Game")
             builder.setMessage("Reset the whole game?")
@@ -142,6 +149,7 @@ class MainActivity : AppCompatActivity() {
             }
             builder.setNegativeButton("cancel") {dialog, which ->
                 dialog.dismiss()
+                setImmersiveMode()
             }
             builder.setOnDismissListener {
                 setImmersiveMode()
@@ -150,16 +158,16 @@ class MainActivity : AppCompatActivity() {
         }
         score1 = 0
         score2 = 0
-        deuceScore = false
-        binding.txtScore1.setTextColor(Color.WHITE)
-        binding.txtScore2.setTextColor(Color.WHITE)
         updateScore()
     }
 
     private fun updateScore() {
-        deuceScore = score1 == score2 && score1 + score2 >= 40
 
-        if (deuceScore) {
+        if((score1 == 20 && score2 < score1) || (score1 >= 20 && score1 == score2 + 1))
+            binding.txtScore1.setTextColor(Color.RED)
+        else if ((score2 == 20 && score1 < score2) || (score2 >= 20 && score2 == score1 + 1))
+            binding.txtScore2.setTextColor(Color.RED)
+        else {
             binding.txtScore1.setTextColor(Color.WHITE)
             binding.txtScore2.setTextColor(Color.WHITE)
         }
